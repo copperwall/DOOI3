@@ -10,8 +10,14 @@ interface ExprC {}
 interface Value {}
 
 class Binding {
+
    string name;
    Value val;
+
+   this(string name, Value val) {
+      this.name = name;
+      this.val = val;
+   }
 }
 
 alias Env = Binding[];
@@ -31,8 +37,8 @@ class LamC : ExprC {
     ExprC bod;
 
     this(string params, ExprC bod) {
-	this.params = params;
-	this.bod = bod;
+	  this.params = params;
+	  this.bod = bod;
     }
 }
 
@@ -131,10 +137,50 @@ class ClosV : Value {
 unittest {
       import std.stdio;
       
-      writeln("Running first unit test!\n");
+      writeln("Running unit tests...\n");
       NumC num  = new NumC(5);
-      assert(num.n == 4);
+      assert(num.n == 5);
+
+      NumV numV  = new NumV(5);
+      assert(numV.n == 5);
+
+      BoolV boo = new BoolV(false);
+      assert(boo.b == false);
+
+      IdC id = new IdC("x");
+      assert(id.s == "x");
+
+      Binding one = new Binding("x", numV);
+      Binding two = new Binding("y", numV);
+      Env env = [];
+      env = env ~ one;
+      env = env ~ two;
+
+      assert(env[0] == one);
+      assert(env[1] == two);
+
+
+
+      LamC func = new LamC("x y z", num);
+
+
+      string[] args = ["x", "y", "z"];
+      ClosV cloV = new ClosV(args, num, env);
+
+
+      assert(cloV.args == ["x", "y", "z"]);
+      assert(cloV.bod == num);
+      assert(cloV.e == env);
+
+
+
+
+
+
+      writeln("Tests complete...");
 }
+
+
 
 void main() {
    writeln("Program runs!");
