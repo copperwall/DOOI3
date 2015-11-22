@@ -198,6 +198,36 @@ unittest {
 
 
 void main() {
+   assert(test(new IfC(new TrueC(),
+               new NumC(10),
+               new NumC(20)),
+            "20"));
+   assert(test(new IfC(new FalseC(),
+               new NumC(10),
+               new NumC(11)),
+            "11"));
+   assert(test(new IfC(new BinopC("eq?",
+                     new NumC(10),
+                     new NumC(10)),
+                  new NumC(12),
+                  new NumC(20)),
+               "12"));
+
+   assert(test(new AppC(new LamC(["a", "b"],
+                  new BinopC("+", new IdC("a"), new IdC("b"))),
+                  [new NumC(10), new NumC(20)]), "30"));
+
+   assert(test(new AppC(
+               new AppC(
+                  new LamC(["x"],
+                     new LamC(["y"],
+                        new BinopC("+",
+                           new IdC("x"),
+                           new IdC("y")))),
+                  [new NumC(5)]),
+               [new NumC(10)]),
+            "15"));
+
    writeln("Program runs!");
 }
 
