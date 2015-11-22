@@ -1,0 +1,5 @@
+# No swap files
+*.swp
+
+*.o
+DOOI3
