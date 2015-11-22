@@ -1,5 +1,9 @@
 import std.stdio;
+<<<<<<< HEAD
 import core.runtime;
+=======
+import std.conv;
+>>>>>>> 085e482ed73fb945a1de00deef519fbbd3d5569c
 
 ////////////////////////////////////////////
 // ExprC Definitions
@@ -119,8 +123,22 @@ class ClosV : Value {
 // Interp
 ////////////////////////////////////////////
 
-Value interp(ExprC c, Env e) {
+string serialize(Value v) {
+   if (cast(NumV)v) {
+      NumV n = cast(NumV)v;
+      return to!string(n.n);
+   } else if (cast(BoolV)v) {
+      BoolV b = cast(BoolV)v;
+      return b.b ? "true" : "false";
+   } else if (cast(ClosV)v) {
+      return "#<procedure>";
+   }
 
+   throw new Error("Invalid Value");
+}
+
+Value interp(ExprC c, Env e) {
+   throw new Error("Unimplemented");
 }
 
 ////////////////////////////////////////////
