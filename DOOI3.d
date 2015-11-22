@@ -31,10 +31,10 @@ class NumC : ExprC {
 }
 
 class LamC : ExprC {
-    string params;
+    string[] params;
     ExprC bod;
 
-    this(string params, ExprC bod) {
+    this(string[] params, ExprC bod) {
 	this.params = params;
 	this.bod = bod;
     }
@@ -123,8 +123,44 @@ class ClosV : Value {
 // Interp
 ////////////////////////////////////////////
 
+Value interp_booC(ExprC xp, Env e) {
+  if (cast (TrueC) xp ) { 
+    return (cast (Value) new BoolV(true));
+  }
+  else {
+    return (cast (Value) new BoolV(false));
+  }
+}
+
+
+
 Value interp(ExprC c, Env e) {
 
+  if (cast (IfC) c ) {
+    IfC ifExp = cast (IfC) c;
+    Value condition = interp(ifExp.left, e);
+
+    if (cast (BoolV) condition) {
+      BoolV condBool = (cast(BoolV) condition);
+      if (condBool.b == true) {
+        return interp(ifExp.middle, e);
+      }
+      else if(condBool.b == false) {
+        return interp(ifExp.right, e);
+      }
+
+    }
+  }
+  
+  else if (cast (LamC) c) {
+    LamC l = (cast (LamC) c);
+    ClosV cloV = new ClosV(l.params, l.bod, e);
+    return (cast (Value) cloV);
+  }
+
+
+
+  return new BoolV(false);
 }
 
 ////////////////////////////////////////////
