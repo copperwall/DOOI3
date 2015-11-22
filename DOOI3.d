@@ -1,5 +1,9 @@
 import std.stdio;
 
+////////////////////////////////////////////
+// ExprC Definitions
+////////////////////////////////////////////
+
 // Empty interface for ExprC expressions.
 interface ExprC {}
 interface Value {}
@@ -11,7 +15,6 @@ class Binding {
 
 alias Env = Binding[];
 
-// ExprC class defintions
 class NumC : ExprC {
    int n;
 
@@ -67,4 +70,18 @@ class ClosV : Value {
       this.bod = bod;
       this.e = e;
    }
+}
+
+////////////////////////////////////////////
+// Interp
+////////////////////////////////////////////
+Value interp(ExprC c, Env e) {
+
+}
+
+////////////////////////////////////////////
+// Test Definitions
+////////////////////////////////////////////
+void main() {
+
 }
