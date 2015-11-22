@@ -21,6 +21,13 @@ class NumC : ExprC {
    this(int n) {
       this.n = n;
    }
+
+   unittest
+   {
+      NumC num  = new NumC(5);
+      assert(num.n == 4);
+
+   }
 }
 
 class LamC : ExprC {   
@@ -113,16 +120,14 @@ class ClosV : Value {
    }
 }
 
-////////////////////////////////////////////
-// Interp
-////////////////////////////////////////////
+
+
 Value interp(ExprC c, Env e) {
 
 }
 
-////////////////////////////////////////////
-// Test Definitions
-////////////////////////////////////////////
+
 void main() {
 
 }
+
