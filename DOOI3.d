@@ -56,7 +56,22 @@ class IdC : ExprC {
    }
 }
 
+class TrueC : ExprC {
 
+}
+
+class FalseC : ExprC {
+
+}
+
+
+class BoolV : Value {
+   bool b;
+
+   this(boo b) {
+      this.b = b;
+   }
+} 
 
 class AppC : ExprC {
    ExprC fun;
