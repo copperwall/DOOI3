@@ -30,7 +30,7 @@ class NumC : ExprC {
    }
 }
 
-class LamC : ExprC {   
+class LamC : ExprC {
     string params;
     ExprC bod;
 
@@ -40,7 +40,7 @@ class LamC : ExprC {
     }
 }
 
-class If : ExprC {
+class IfC : ExprC {
     ExprC left;
     ExprC middle;
     ExprC right;
@@ -53,15 +53,15 @@ class If : ExprC {
 }
 
 
-class Binop : ExprC {
+class BinopC : ExprC {
     string name;
     ExprC left;
     ExprC right;
 
-    this(string name, ExprC left, ExprC right) {
-	this.name = name;
-	this. left = left;
-	this.right = right;
+   this(string name, ExprC left, ExprC right) {
+      this.name = name;
+      this. left = left;
+      this.right = right;
     }
 }
 
@@ -87,6 +87,10 @@ class AppC : ExprC {
 class TrueC : ExprC {}
 class FalseC : ExprC {}
 
+////////////////////////////////////////////
+// ExprC Definitions
+////////////////////////////////////////////
+
 class NumV : Value {
    int n;
 
@@ -101,11 +105,6 @@ class BoolV : Value {
    this(bool b) {
       this.b = b;
    }
-} 
-
-class AppC : ExprC {
-   ExprC fun;
-   ExprC[] args;
 }
 
 class ClosV : Value {
@@ -120,14 +119,18 @@ class ClosV : Value {
    }
 }
 
-
+////////////////////////////////////////////
+// Interp
+////////////////////////////////////////////
 
 Value interp(ExprC c, Env e) {
 
 }
 
+////////////////////////////////////////////
+// Tests
+////////////////////////////////////////////
 
 void main() {
 
 }
-
