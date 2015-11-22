@@ -1,6 +1,7 @@
 import std.stdio;
 import core.runtime;
 import std.conv;
+import std.algorithm;
 
 ////////////////////////////////////////////
 // ExprC Definitions
@@ -140,7 +141,45 @@ string serialize(Value v) {
    throw new Error("Invalid Value");
 }
 
+Value lookup(string s, Env e) {
+   for (size_t i = 0; i < e.length; i++) {
+      if (e[i].name == s) {
+         return e[i].val;
+      }
+   }
+
+   throw new Error("Unbound variable");
+}
+
 Value interp(ExprC c, Env e) {
+   if (cast (NumC) c) {
+      NumC n = cast (NumC) c;
+      return new NumV(n.n);
+   } else if (cast (IdC) c) {
+      IdC i = cast (IdC) c;
+      return lookup(i.s, e);
+   } else if (cast (AppC) c) {
+      AppC a = cast (AppC) c;
+      Value fv = interp(a.fun, e);
+
+      if (auto cv = (cast (ClosV) fv)) {
+         if (cv.args.length == a.args.length) {
+            auto values = map!(a => interp(a, e))(a.args);
+            auto cenv = cv.e;
+
+            for (size_t i = 0; i < a.args.length; i++) {
+               auto b = new Binding(cv.args[i], values[i]);
+               cenv = b ~ cenv;
+            }
+
+            return interp(cv.bod, cenv);
+         } else {
+            throw new Error("Wrong arity");
+         }
+      } else {
+         throw new Error("Can't apply args to non function");
+      }
+   }
    throw new Error("Unimplemented");
 }
 
@@ -150,7 +189,7 @@ Value interp(ExprC c, Env e) {
 
 unittest {
       import std.stdio;
-      
+
       writeln("Running unit tests...\n");
       NumC num  = new NumC(5);
       assert(num.n == 5);
@@ -228,11 +267,11 @@ unittest {
   //BINOP TESTS
     BinopC b1 = new BinopC("+", new NumC(1), new NumC(2));
     assert(interp(b1, []) == new NumV(3));
- 
+
     BinopC b2 = new BinopC("-", new NumC(9), new IdC("dorf"));
     Env env2 = [new Binding("dorf", 6)];
     assert(interp(b2, env2) == new NumV(3));
- 
+
     BinopC b3 = new BinopC("/", new BinopC("*", new NumC(2), new NumC(2)) new NumC(4));
     assert(interp(b3, []) == new NumV(1));
 
@@ -243,7 +282,7 @@ unittest {
     IfC if2 = new IfC(new FalseC(), new TrueC(), new BinopC("+", new IdC("eh"), new IdC("whaddup")));
     assert(interp(if2, [new Binding("eh", 5), new Binding("whaddup", 4)]) == 9);
 
-  //LamC Tests  
+  //LamC Tests
  }
 
 
