@@ -34,10 +34,10 @@ class NumC : ExprC {
 }
 
 class LamC : ExprC {
-    string params;
+    string[] params;
     ExprC bod;
 
-    this(string params, ExprC bod) {
+    this(string[] params, ExprC bod) {
 	  this.params = params;
 	  this.bod = bod;
     }
@@ -175,17 +175,47 @@ unittest {
       assert(env[1] == two);
 
 
+      BinopC binop = new BinopC("+", num, num);
+      assert(binop.name == "+");
+      assert(binop.left == num);
+      assert(binop.right == num);
 
-      LamC func = new LamC("x y z", num);
 
 
       string[] args = ["x", "y", "z"];
+
+
+
+      LamC func = new LamC(args, num);
+      assert(func.params == ["x", "y", "z"]);
+      assert(func.bod == num);
+
       ClosV cloV = new ClosV(args, num, env);
 
 
       assert(cloV.args == ["x", "y", "z"]);
       assert(cloV.bod == num);
       assert(cloV.e == env);
+
+
+      AppC app = new AppC(func, [num]);
+      assert(app.fun == func);
+      assert(app.args == [num]);
+
+      ExprC[] expArgs = [];
+      expArgs = expArgs ~ num;
+      expArgs = expArgs ~ id;
+
+      app = new AppC(func, expArgs);
+      assert(app.args == expArgs);
+
+
+
+
+
+
+
+
 
 
 
@@ -220,6 +250,36 @@ unittest {
 
 
 void main() {
+   assert(test(new IfC(new TrueC(),
+               new NumC(10),
+               new NumC(20)),
+            "20"));
+   assert(test(new IfC(new FalseC(),
+               new NumC(10),
+               new NumC(11)),
+            "11"));
+   assert(test(new IfC(new BinopC("eq?",
+                     new NumC(10),
+                     new NumC(10)),
+                  new NumC(12),
+                  new NumC(20)),
+               "12"));
+
+   assert(test(new AppC(new LamC(["a", "b"],
+                  new BinopC("+", new IdC("a"), new IdC("b"))),
+                  [new NumC(10), new NumC(20)]), "30"));
+
+   assert(test(new AppC(
+               new AppC(
+                  new LamC(["x"],
+                     new LamC(["y"],
+                        new BinopC("+",
+                           new IdC("x"),
+                           new IdC("y")))),
+                  [new NumC(5)]),
+               [new NumC(10)]),
+            "15"));
+
    writeln("Program runs!");
 }
 
