@@ -20,10 +20,13 @@ class IdC : ExprC {
    }
 }
 
-class BoolC : ExprC {
+
+
+
+class BoolV : Value {
    bool b;
 
-   this(boolean b) {
+   this(boo b) {
       this.b = b;
    }
 } 
