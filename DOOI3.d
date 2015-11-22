@@ -12,6 +12,42 @@ class NumC : ExprC {
    }
 }
 
+class LamC : ExprC {   
+    string params;
+    ExprC bod;
+
+    this(string params, ExprC bod) {
+	this.params = params;
+	this.bod = bod;
+    }
+}
+
+class If : ExprC {
+    ExprC left;
+    ExprC middle;
+    ExprC right;
+
+    this(ExprC left, ExprC middle, ExprC right) {
+	this.left = left;
+	this.middle = middle;
+	this.right = right;
+    }
+}
+
+
+class Binop : ExprC {
+    string name;
+    ExprC left;
+    ExprC right;
+
+    this(string name, ExprC left, ExprC right) {
+	this.name = name;
+	this. left = left;
+	this.right = right;
+    }
+}
+
+
 class IdC : ExprC {
    string s;
 
@@ -20,13 +56,6 @@ class IdC : ExprC {
    }
 }
 
-class BoolC : ExprC {
-   bool b;
-
-   this(boolean b) {
-      this.b = b;
-   }
-} 
 
 
 class AppC : ExprC {
@@ -37,4 +66,9 @@ class AppC : ExprC {
       this.fun = fun;
       this.args = args;
    }
+}
+
+void main()
+{
+
 }
