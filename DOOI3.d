@@ -1,4 +1,5 @@
 import std.stdio;
+import core.runtime;
 
 ////////////////////////////////////////////
 // ExprC Definitions
@@ -22,12 +23,7 @@ class NumC : ExprC {
       this.n = n;
    }
 
-   unittest
-   {
-      NumC num  = new NumC(5);
-      assert(num.n == 4);
 
-   }
 }
 
 class LamC : ExprC {
@@ -131,6 +127,35 @@ Value interp(ExprC c, Env e) {
 // Tests
 ////////////////////////////////////////////
 
-void main() {
 
+unittest {
+      import std.stdio;
+      
+      writeln("Running first unit test!\n");
+      NumC num  = new NumC(5);
+      assert(num.n == 4);
+      
 }
+
+
+//Interp tests
+unittest {
+    BinopC b1 = new BinopC("+", new NumC(1), new NumC(2));
+    assert(interp(b1, []) == new NumV(3));
+
+    BinopC b2 = new BinopC("-", new NumC(9), new IdC("dorf"));
+    Env env2 = [new Binding("dorf, 6)];
+    assert(interp(b2, env2) == new NumV(3));
+
+    BinopC b3 = new BinopC("/", new BinopC("*", new NumC(2), new NumC(2)) new NumC(4));
+    assert(interp(b3, []) == new NumV(1));
+}
+
+
+void main() {
+   writeln("Program runs!");
+}
+
+
+
+
