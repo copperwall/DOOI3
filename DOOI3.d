@@ -1,4 +1,5 @@
 import std.stdio;
+import core.runtime;
 
 ////////////////////////////////////////////
 // ExprC Definitions
@@ -22,12 +23,7 @@ class NumC : ExprC {
       this.n = n;
    }
 
-   unittest
-   {
-      NumC num  = new NumC(5);
-      assert(num.n == 4);
 
-   }
 }
 
 class LamC : ExprC {
@@ -123,14 +119,27 @@ class ClosV : Value {
 // Interp
 ////////////////////////////////////////////
 
-Value interp(ExprC c, Env e) {
+//Value interp(ExprC c, Env e) {
 
-}
+//}
 
 ////////////////////////////////////////////
 // Tests
 ////////////////////////////////////////////
 
-void main() {
 
+unittest {
+      import std.stdio;
+      
+      writeln("Running first unit test!\n");
+      NumC num  = new NumC(5);
+      assert(num.n == 4);
 }
+
+void main() {
+   writeln("Program runs!");
+}
+
+
+
+
