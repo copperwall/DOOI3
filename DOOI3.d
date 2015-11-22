@@ -20,7 +20,13 @@ class IdC : ExprC {
    }
 }
 
+class TrueC : ExprC {
 
+}
+
+class FalseC : ExprC {
+
+}
 
 
 class BoolV : Value {
