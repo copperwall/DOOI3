@@ -20,6 +20,15 @@ class IdC : ExprC {
    }
 }
 
+class BoolC : ExprC {
+   bool b;
+
+   this(boolean b) {
+      this.b = b;
+   }
+} 
+
+
 class AppC : ExprC {
    ExprC fun;
    ExprC[] args;
