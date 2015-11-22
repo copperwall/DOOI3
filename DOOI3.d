@@ -1,9 +1,20 @@
 import std.stdio;
 
+////////////////////////////////////////////
+// ExprC Definitions
+////////////////////////////////////////////
+
 // Empty interface for ExprC expressions.
 interface ExprC {}
+interface Value {}
 
-// ExprC class defintions
+class Binding {
+   string name;
+   Value val;
+}
+
+alias Env = Binding[];
+
 class NumC : ExprC {
    int n;
 
@@ -56,23 +67,6 @@ class IdC : ExprC {
    }
 }
 
-class TrueC : ExprC {
-
-}
-
-class FalseC : ExprC {
-
-}
-
-
-class BoolV : Value {
-   bool b;
-
-   this(boo b) {
-      this.b = b;
-   }
-} 
-
 class AppC : ExprC {
    ExprC fun;
    ExprC[] args;
@@ -83,7 +77,52 @@ class AppC : ExprC {
    }
 }
 
-void main()
-{
+class TrueC : ExprC {}
+class FalseC : ExprC {}
+
+class NumV : Value {
+   int n;
+
+   this(int n) {
+      this.n = n;
+   }
+}
+
+class BoolV : Value {
+   bool b;
+
+   this(bool b) {
+      this.b = b;
+   }
+} 
+
+class AppC : ExprC {
+   ExprC fun;
+   ExprC[] args;
+}
+
+class ClosV : Value {
+   string[] args;
+   ExprC bod;
+   Env e;
+
+   this(string[] args, ExprC bod, Env e) {
+      this.args = args;
+      this.bod = bod;
+      this.e = e;
+   }
+}
+
+////////////////////////////////////////////
+// Interp
+////////////////////////////////////////////
+Value interp(ExprC c, Env e) {
+
+}
+
+////////////////////////////////////////////
+// Test Definitions
+////////////////////////////////////////////
+void main() {
 
 }
