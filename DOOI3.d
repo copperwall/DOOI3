@@ -33,10 +33,10 @@ class NumC : ExprC {
 }
 
 class LamC : ExprC {
-    string params;
+    string[] params;
     ExprC bod;
 
-    this(string params, ExprC bod) {
+    this(string[] params, ExprC bod) {
 	  this.params = params;
 	  this.bod = bod;
     }
@@ -160,17 +160,47 @@ unittest {
       assert(env[1] == two);
 
 
+      BinopC binop = new BinopC("+", num, num);
+      assert(binop.name == "+");
+      assert(binop.left == num);
+      assert(binop.right == num);
 
-      LamC func = new LamC("x y z", num);
 
 
       string[] args = ["x", "y", "z"];
+
+
+
+      LamC func = new LamC(args, num);
+      assert(func.params == ["x", "y", "z"]);
+      assert(func.bod == num);
+
       ClosV cloV = new ClosV(args, num, env);
 
 
       assert(cloV.args == ["x", "y", "z"]);
       assert(cloV.bod == num);
       assert(cloV.e == env);
+
+
+      AppC app = new AppC(func, [num]);
+      assert(app.fun == func);
+      assert(app.args == [num]);
+
+      ExprC[] expArgs = [];
+      expArgs = expArgs ~ num;
+      expArgs = expArgs ~ id;
+
+      app = new AppC(func, expArgs);
+      assert(app.args == expArgs);
+
+
+
+
+
+
+
+
 
 
 
