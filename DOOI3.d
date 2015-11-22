@@ -134,3 +134,31 @@ Value interp(ExprC c, Env e) {
 void main() {
 
 }
+
+/**
+ * test
+ *
+ * @param ExprC expression - The expression to interpret.
+ * @param string expected - The expected result to compare against
+ */
+bool test(ExprC expression, string expected) {
+   return serialize(interp(expression, [])) == expected;
+}
+
+/**
+ * test/exn
+ *
+ * @param ExprC expression - The expression to interpret.
+ * @param string expected - The expected result to compare against
+ */
+bool test_exn(ExprC expression, string expected) {
+   bool result = false;
+
+   try {
+      interp(expression, []);
+   } catch (Error e) {
+      result = (e.toString() == expected);
+   }
+
+   return result;
+}
