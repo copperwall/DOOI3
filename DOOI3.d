@@ -1,4 +1,6 @@
 import std.stdio;
+import core.runtime;
+import std.conv;
 
 ////////////////////////////////////////////
 // ExprC Definitions
@@ -124,12 +126,82 @@ class ClosV : Value {
 ////////////////////////////////////////////
 
 Value interp(ExprC c, Env e) {
+   if (cast(BinopC) c)
+   {
+      BinopC binop = cast(BinopC) c;
+      Value left = interp(binop.left, e);
+      Value right = interp(binop.right, e);
+      string op = binop.name;
 
+      if (typeid(left) == typeid(NumV) && typeid(right) == typeid(NumV))
+        return evalNumBinop(op, left, right);
+      else if (op == "eq?" && typeid(left) == typeid(BoolV) && typeid(right) == typeid(BoolV))
+        return new BoolV(left == right);
+      else 
+        throw new Error("No such operator");
+   }
+
+   return null;
 }
+
+
+Value evalNumBinop(string op, Value left, Value right)
+{
+  int newLeft = (cast(NumC) left).n;
+  int newRight = (cast(NumC) right).n;
+
+  switch (op)
+  {
+    case "+":
+      return new NumV(newLeft + newRight);
+
+    case "-":
+      return new NumV(newLeft - newRight);
+
+    case "/":
+      return new NumV(newLeft / newRight);
+
+    case "*":
+      return new NumV(newLeft * newRight);
+
+    case "<=":
+      return new BoolV(newLeft <= newRight);
+
+    default:
+      throw new Error("No such arithmetic operator");
+  }
+
+  return null;
+}
+
 
 ////////////////////////////////////////////
 // Tests
 ////////////////////////////////////////////
+
+unittest {
+      import std.stdio;
+      
+      writeln("Running first unit test!\n");
+      NumC num  = new NumC(5);
+      assert(num.n == 4);
+      
+}
+
+
+//Interp tests
+unittest {
+    BinopC b1 = new BinopC("+", new NumC(1), new NumC(2));
+    assert(interp(b1, []) == new NumV(3));
+
+    BinopC b2 = new BinopC("-", new NumC(9), new IdC("dorf"));
+    Env env2 = [new Binding("dorf", 6)];
+    assert(interp(b2, env2) == new NumV(3));
+
+    BinopC b3 = new BinopC("/", new BinopC("*", new NumC(2), new NumC(2)) new NumC(4));
+    assert(interp(b3, []) == new NumV(1));
+}
+
 
 void main() {
 
