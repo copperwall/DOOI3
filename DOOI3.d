@@ -30,8 +30,6 @@ class NumC : ExprC {
    this(int n) {
       this.n = n;
    }
-
-
 }
 
 class LamC : ExprC {
@@ -57,7 +55,6 @@ class IfC : ExprC {
     }
 }
 
-
 class BinopC : ExprC {
     string name;
     ExprC left;
@@ -69,7 +66,6 @@ class BinopC : ExprC {
       this.right = right;
     }
 }
-
 
 class IdC : ExprC {
    string s;
@@ -128,18 +124,14 @@ class ClosV : Value {
 // Interp
 ////////////////////////////////////////////
 
-
 Value interp_booC(ExprC xp, Env e) {
-  if (cast (TrueC) xp ) { 
+  if (cast (TrueC) xp ) {
     return (cast (Value) new BoolV(true));
   }
   else {
     return (cast (Value) new BoolV(false));
   }
 }
-
-
-
 
 string serialize(Value v) {
    if (cast(NumV)v) {
@@ -165,7 +157,7 @@ Value lookup(string s, Env e) {
    throw new Error("Unbound variable");
 }
 
-Value interp(ExprC c, Env e) 
+Value interp(ExprC c, Env e)
 {
    if (cast (NumC) c) {
       NumC n = cast (NumC) c;
@@ -188,57 +180,44 @@ Value interp(ExprC c, Env e)
             }
 
             return interp(cv.bod, cenv);
-         } else {
+         } else
             throw new Error("Wrong arity");
-         }
-      } else {
+      } else
          throw new Error("Can't apply args to non function");
-      }
-   } else if (cast (IfC) c ) {
+   } else if (cast (IfC) c) {
     IfC ifExp = cast (IfC) c;
     Value condition = interp(ifExp.left, e);
 
     if (cast (BoolV) condition) {
       BoolV condBool = (cast(BoolV) condition);
-      if (condBool.b == true) {
-
+      if (condBool.b == true)
         return interp(ifExp.middle, e);
-      }
-      else if(condBool.b == false) {
+      else if(condBool.b == false)
         return interp(ifExp.right, e);
-      }
-
     }
-  }
-  
-  else if (cast (LamC) c) {
+  } else if (cast (LamC) c) {
     LamC l = (cast (LamC) c);
     ClosV cloV = new ClosV(l.params, l.bod, e);
     return (cast (Value) cloV);
-  }
-
-   else if (cast(BinopC) c){
+  } else if (cast(BinopC) c){
       BinopC binop = cast(BinopC) c;
       Value left = interp(binop.left, e);
       Value right = interp(binop.right, e);
       string op = binop.name;
 
-      if ((cast (NumV) left) && (cast (NumV) right)) {
+      if ((cast (NumV) left) && (cast (NumV) right))
         return evalNumBinop(op, left, right);
-      }
       else if (op == "eq?" && typeid(left) == typeid(BoolV) && typeid(right) == typeid(BoolV))
         return new BoolV(left == right);
-      else 
+      else
         throw new Error("No such operator");
-   } else if (cast (TrueC) c) {
+   } else if (cast (TrueC) c)
       return new BoolV(true);
-   } else if (cast (FalseC) c) {
+   else if (cast (FalseC) c)
       return new BoolV(false);
-   }
 
    throw new Error("Unimplemented");
 }
-
 
 Value evalNumBinop(string op, Value left, Value right)
 {
@@ -272,24 +251,12 @@ Value evalNumBinop(string op, Value left, Value right)
   return null;
 }
 
-
 ////////////////////////////////////////////
 // Tests
 ////////////////////////////////////////////
 
-unittest {
-      import std.stdio;
-      
-      writeln("Running first unit test!\n");
-      NumC num  = new NumC(5);
-      assert(num.n == 5);
-      
-}
-
-
 //Interp tests
 unittest {
-
       writeln("Running unit tests...\n");
       NumC num  = new NumC(5);
       assert(num.n == 5);
@@ -312,17 +279,12 @@ unittest {
       assert(env[0] == one);
       assert(env[1] == two);
 
-
       BinopC binop = new BinopC("+", num, num);
       assert(binop.name == "+");
       assert(binop.left == num);
       assert(binop.right == num);
 
-
-
       string[] args = ["x", "y", "z"];
-
-
 
       LamC func = new LamC(args, num);
       assert(func.params == ["x", "y", "z"]);
@@ -330,11 +292,9 @@ unittest {
 
       ClosV cloV = new ClosV(args, num, env);
 
-
       assert(cloV.args == ["x", "y", "z"]);
       assert(cloV.bod == num);
       assert(cloV.e == env);
-
 
       AppC app = new AppC(func, [num]);
       assert(app.fun == func);
@@ -347,12 +307,11 @@ unittest {
       app = new AppC(func, expArgs);
       assert(app.args == expArgs);
 
-
       writeln("Tests complete...");
 }
 
 unittest {
-  //BINOP TESTS
+    // Binop Tests
     BinopC b1 = new BinopC("+", new NumC(1), new NumC(2));
     assert(serialize(interp(b1, [])) == "3");
 
@@ -364,38 +323,39 @@ unittest {
     BinopC b3 = new BinopC("/", new BinopC("*", new NumC(2), new NumC(2)), new NumC(4));
     assert(serialize(interp(b3, [])) == "1");
 
-//  //IF TESTS
 
-
-
+    // If Tests
     IfC if1 = new IfC(new TrueC(), new BinopC("+", new IdC("hey"), new NumC(1)), new FalseC());
     assert(serialize(interp(if1, [new Binding("hey", new NumV(5))])) == "6");
 
     IfC if2 = new IfC(new FalseC(), new TrueC(), new BinopC("+", new IdC("eh"), new IdC("whaddup")));
     assert(serialize(interp(if2, [new Binding("eh", new NumV(5)), new Binding("whaddup", new NumV(4))])) == "9");
-
-  //LamC Tests
- }
+}
 
 
 void main() {
+   writeln("Running functional tests");
    assert(test(new IfC(new TrueC(),
                new NumC(10),
                new NumC(20)),
             "10"));
+   write(".");
    assert(test(new IfC(new FalseC(),
                new NumC(10),
                new NumC(11)),
             "11"));
+   write(".");
    assert(test(new IfC(new BinopC("eq?",
                      new NumC(10),
                      new NumC(10)),
                   new NumC(12),
                   new NumC(20)),
                "12"));
+   write(".");
    assert(test(new AppC(new LamC(["a", "b"],
                   new BinopC("+", new IdC("a"), new IdC("b"))),
                   [new NumC(10), new NumC(20)]), "30"));
+   write(".");
    assert(test(new AppC(
                new AppC(
                   new LamC(["x"],
@@ -406,8 +366,8 @@ void main() {
                   [new NumC(5)]),
                [new NumC(10)]),
             "15"));
-
-   writeln("Program runs!");
+   write(".");
+   writeln("\nFunctional Tests Complete.");
 }
 
 /**
