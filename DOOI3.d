@@ -193,14 +193,14 @@ Value interp(ExprC c, Env e) {
       } else {
          throw new Error("Can't apply args to non function");
       }
-   }
-    else if (cast (IfC) c ) {
+   } else if (cast (IfC) c ) {
     IfC ifExp = cast (IfC) c;
     Value condition = interp(ifExp.left, e);
 
     if (cast (BoolV) condition) {
       BoolV condBool = (cast(BoolV) condition);
       if (condBool.b == true) {
+
         return interp(ifExp.middle, e);
       }
       else if(condBool.b == false) {
@@ -301,35 +301,38 @@ unittest {
       writeln("Tests complete...");
 }
 
-unittest {
-  //BINOP TESTS
-    BinopC b1 = new BinopC("+", new NumC(1), new NumC(2));
-    assert(interp(b1, []) == new NumV(3));
+//unittest {
+//  //BINOP TESTS
+//    BinopC b1 = new BinopC("+", new NumC(1), new NumC(2));
+//    assert(interp(b1, []) == new NumV(3));
 
-    BinopC b2 = new BinopC("-", new NumC(9), new IdC("dorf"));
-    Env env2 = [new Binding("dorf", 6)];
-    assert(interp(b2, env2) == new NumV(3));
+//    BinopC b2 = new BinopC("-", new NumC(9), new IdC("dorf"));
+//    Env env2 = [new Binding("dorf", 6)];
+//    assert(interp(b2, env2) == new NumV(3));
 
-    BinopC b3 = new BinopC("/", new BinopC("*", new NumC(2), new NumC(2)), new NumC(4));
-    assert(interp(b3, []) == new NumV(1));
+//    BinopC b3 = new BinopC("/", new BinopC("*", new NumC(2), new NumC(2)), new NumC(4));
+//    assert(interp(b3, []) == new NumV(1));
 
-  //IF TESTS
-    IfC if1 = new IfC(new TrueC(), new BinopC("+", new IdC("hey"), new NumC(1)), new FalseC());
-    assert(interp(if1, [new Binding("hey", 5)]) == 6);
+//  //IF TESTS
+//    IfC if1 = new IfC(new TrueC(), new BinopC("+", new IdC("hey"), new NumC(1)), new FalseC());
+//    assert(interp(if1, [new Binding("hey", 5)]) == 6);
 
-    IfC if2 = new IfC(new FalseC(), new TrueC(), new BinopC("+", new IdC("eh"), new IdC("whaddup")));
-    assert(interp(if2, [new Binding("eh", 5), new Binding("whaddup", 4)]) == 9);
+//    IfC if2 = new IfC(new FalseC(), new TrueC(), new BinopC("+", new IdC("eh"), new IdC("whaddup")));
+//    assert(interp(if2, [new Binding("eh", 5), new Binding("whaddup", 4)]) == 9);
 
-  //LamC Tests
- }
+//  //LamC Tests
+// }
 
 
 
 void main() {
+
+  writeln ("TESTING IFC" );
+
    assert(test(new IfC(new TrueC(),
                new NumC(10),
                new NumC(20)),
-            "20"));
+            "10"));
    assert(test(new IfC(new FalseC(),
                new NumC(10),
                new NumC(11)),
