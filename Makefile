@@ -1,6 +1,9 @@
 build:
 	dmd *.d
 
+test:
+	dmd -unittest *.d
+
 run:
 	dmd -run *.d
 
