@@ -36,10 +36,9 @@ class LamC : ExprC {
     string[] params;
     ExprC bod;
 
-    this(string[] params, ExprC bod) {
-
-	  this.params = params;
-	  this.bod = bod;
+     this(string[] params, ExprC bod) {
+        this.params = params;
+        this.bod = bod;
    }
 }
 
@@ -49,9 +48,9 @@ class IfC : ExprC {
     ExprC right;
 
     this(ExprC left, ExprC middle, ExprC right) {
-	this.left = left;
-	this.middle = middle;
-	this.right = right;
+       this.left = left;
+       this.middle = middle;
+       this.right = right;
     }
 }
 
@@ -147,6 +146,10 @@ string serialize(Value v) {
    throw new Error("Invalid Value");
 }
 
+/**
+ * Given a string s, return the first value that corresponds to that string in
+ * the environment.
+ */
 Value lookup(string s, Env e) {
    for (size_t i = 0; i < e.length; i++) {
       if (e[i].name == s) {
@@ -157,8 +160,10 @@ Value lookup(string s, Env e) {
    throw new Error("Unbound variable");
 }
 
-Value interp(ExprC c, Env e)
-{
+/**
+ * Takes an expression and an environment and returns the interpreted Value.
+ */
+Value interp(ExprC c, Env e) {
    if (cast (NumC) c) {
       NumC n = cast (NumC) c;
       return new NumV(n.n);
@@ -219,8 +224,11 @@ Value interp(ExprC c, Env e)
    throw new Error("Unimplemented");
 }
 
-Value evalNumBinop(string op, Value left, Value right)
-{
+/**
+ * Takes a binary operator and two Values. Returns the result of the
+ * appropriate binary operation.
+ */
+Value evalNumBinop(string op, Value left, Value right) {
   int newLeft = (cast(NumV) left).n;
   int newRight = (cast(NumV) right).n;
 
@@ -332,7 +340,6 @@ unittest {
     assert(serialize(interp(if2, [new Binding("eh", new NumV(5)), new Binding("whaddup", new NumV(4))])) == "9");
 }
 
-
 void main() {
    writeln("Running functional tests");
    assert(test(new IfC(new TrueC(),
@@ -371,7 +378,8 @@ void main() {
 }
 
 /**
- * test
+ * Takes an expression and an expected value and returns whether or not they
+ * match.
  *
  * @param ExprC expression - The expression to interpret.
  * @param string expected - The expected result to compare against
@@ -381,7 +389,7 @@ bool test(ExprC expression, string expected) {
 }
 
 /**
- * test/exn
+ * Takes an expression and an expected error message.
  *
  * @param ExprC expression - The expression to interpret.
  * @param string expected - The expected result to compare against
