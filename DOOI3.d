@@ -12,7 +12,6 @@ interface ExprC {}
 interface Value {}
 
 class Binding {
-
    string name;
    Value val;
 
@@ -263,8 +262,8 @@ unittest {
       NumV numV  = new NumV(5);
       assert(numV.n == 5);
 
-      BoolV boo = new BoolV(false);
-      assert(boo.b == false);
+      BoolV boolV = new BoolV(false);
+      assert(boolV.b == false);
 
       IdC id = new IdC("x");
       assert(id.s == "x");
