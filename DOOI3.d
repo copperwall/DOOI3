@@ -165,7 +165,8 @@ Value lookup(string s, Env e) {
    throw new Error("Unbound variable");
 }
 
-Value interp(ExprC c, Env e) {
+Value interp(ExprC c, Env e) 
+{
    if (cast (NumC) c) {
       NumC n = cast (NumC) c;
       return new NumV(n.n);
@@ -216,10 +217,53 @@ Value interp(ExprC c, Env e) {
     return (cast (Value) cloV);
   }
 
+   else if (cast(BinopC) c){
+      BinopC binop = cast(BinopC) c;
+      Value left = interp(binop.left, e);
+      Value right = interp(binop.right, e);
+      string op = binop.name;
+
+      if (typeid(left) == typeid(NumV) && typeid(right) == typeid(NumV))
+        return evalNumBinop(op, left, right);
+      else if (op == "eq?" && typeid(left) == typeid(BoolV) && typeid(right) == typeid(BoolV))
+        return new BoolV(left == right);
+      else 
+        throw new Error("No such operator");
+   }
 
    throw new Error("Unimplemented");
-
 }
+
+
+Value evalNumBinop(string op, Value left, Value right)
+{
+  int newLeft = (cast(NumC) left).n;
+  int newRight = (cast(NumC) right).n;
+
+  switch (op)
+  {
+    case "+":
+      return new NumV(newLeft + newRight);
+
+    case "-":
+      return new NumV(newLeft - newRight);
+
+    case "/":
+      return new NumV(newLeft / newRight);
+
+    case "*":
+      return new NumV(newLeft * newRight);
+
+    case "<=":
+      return new BoolV(newLeft <= newRight);
+
+    default:
+      throw new Error("No such arithmetic operator");
+  }
+
+  return null;
+}
+
 
 ////////////////////////////////////////////
 // Tests
@@ -227,6 +271,16 @@ Value interp(ExprC c, Env e) {
 
 unittest {
       import std.stdio;
+      
+      writeln("Running first unit test!\n");
+      NumC num  = new NumC(5);
+      assert(num.n == 4);
+      
+}
+
+
+//Interp tests
+unittest {
 
       writeln("Running unit tests...\n");
       NumC num  = new NumC(5);
@@ -286,43 +340,34 @@ unittest {
       assert(app.args == expArgs);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
       writeln("Tests complete...");
 }
 
-//unittest {
-//  //BINOP TESTS
-//    BinopC b1 = new BinopC("+", new NumC(1), new NumC(2));
-//    assert(interp(b1, []) == new NumV(3));
+unittest {
+  //BINOP TESTS
+    BinopC b1 = new BinopC("+", new NumC(1), new NumC(2));
+    assert(interp(b1, []) == new NumV(3));
 
-//    BinopC b2 = new BinopC("-", new NumC(9), new IdC("dorf"));
-//    Env env2 = [new Binding("dorf", 6)];
-//    assert(interp(b2, env2) == new NumV(3));
+    BinopC b2 = new BinopC("-", new NumC(9), new IdC("dorf"));
+    Env env2 = [new Binding("dorf", 6)];
+    assert(interp(b2, env2) == new NumV(3));
 
-//    BinopC b3 = new BinopC("/", new BinopC("*", new NumC(2), new NumC(2)), new NumC(4));
-//    assert(interp(b3, []) == new NumV(1));
+
+    BinopC b3 = new BinopC("/", new BinopC("*", new NumC(2), new NumC(2)), new NumC(4));
+    assert(interp(b3, []) == new NumV(1));
 
 //  //IF TESTS
-//    IfC if1 = new IfC(new TrueC(), new BinopC("+", new IdC("hey"), new NumC(1)), new FalseC());
-//    assert(interp(if1, [new Binding("hey", 5)]) == 6);
 
-//    IfC if2 = new IfC(new FalseC(), new TrueC(), new BinopC("+", new IdC("eh"), new IdC("whaddup")));
-//    assert(interp(if2, [new Binding("eh", 5), new Binding("whaddup", 4)]) == 9);
 
-//  //LamC Tests
-// }
 
+    IfC if1 = new IfC(new TrueC(), new BinopC("+", new IdC("hey"), new NumC(1)), new FalseC());
+    assert(interp(if1, [new Binding("hey", 5)]) == 6);
+
+    IfC if2 = new IfC(new FalseC(), new TrueC(), new BinopC("+", new IdC("eh"), new IdC("whaddup")));
+    assert(interp(if2, [new Binding("eh", 5), new Binding("whaddup", 4)]) == 9);
+
+  //LamC Tests
+ }
 
 
 void main() {
