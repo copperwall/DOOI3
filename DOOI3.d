@@ -143,7 +143,7 @@ string serialize(Value v) {
       return "#<procedure>";
    }
 
-   throw new Error("Invalid Value");
+   throw new Exception("Invalid Value");
 }
 
 /**
@@ -157,7 +157,7 @@ Value lookup(string s, Env e) {
       }
    }
 
-   throw new Error("Unbound variable");
+   throw new Exception("Unbound variable");
 }
 
 /**
@@ -186,9 +186,9 @@ Value interp(ExprC c, Env e) {
 
             return interp(cv.bod, cenv);
          } else
-            throw new Error("Wrong arity");
+            throw new Exception("Wrong arity");
       } else
-         throw new Error("Can't apply args to non function");
+         throw new Exception("Can't apply args to non function");
    } else if (cast (IfC) c) {
     IfC ifExp = cast (IfC) c;
     Value condition = interp(ifExp.left, e);
@@ -215,13 +215,13 @@ Value interp(ExprC c, Env e) {
       else if (op == "eq?" && typeid(left) == typeid(BoolV) && typeid(right) == typeid(BoolV))
         return new BoolV(left == right);
       else
-        throw new Error("No such operator");
+        throw new Exception("No such operator");
    } else if (cast (TrueC) c)
       return new BoolV(true);
    else if (cast (FalseC) c)
       return new BoolV(false);
 
-   throw new Error("Unimplemented");
+   throw new Exception("Unimplemented");
 }
 
 /**
@@ -253,10 +253,8 @@ Value evalNumBinop(string op, Value left, Value right) {
       return new BoolV(newLeft == newRight);
 
     default:
-      throw new Error("No such arithmetic operator");
+      throw new Exception("No such arithmetic operator");
   }
-
-  return null;
 }
 
 ////////////////////////////////////////////
@@ -374,6 +372,9 @@ void main() {
                [new NumC(10)]),
             "15"));
    write(".");
+   assert(test_exn(new BinopC("^", new NumC(10), new NumC(20)),
+            "No such arithmetic operator"));
+   write(".");
    writeln("\nFunctional Tests Complete.");
 }
 
@@ -399,8 +400,8 @@ bool test_exn(ExprC expression, string expected) {
 
    try {
       interp(expression, []);
-   } catch (Error e) {
-      result = (e.toString() == expected);
+   } catch (Exception e) {
+      result = (e.msg == expected);
    }
 
    return result;
