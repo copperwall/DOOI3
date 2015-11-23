@@ -123,15 +123,9 @@ class ClosV : Value {
 // Interp
 ////////////////////////////////////////////
 
-Value interp_booC(ExprC xp, Env e) {
-  if (cast (TrueC) xp ) {
-    return (cast (Value) new BoolV(true));
-  }
-  else {
-    return (cast (Value) new BoolV(false));
-  }
-}
-
+/**
+ * Serialize Value type into a string.
+ */
 string serialize(Value v) {
    if (cast(NumV)v) {
       NumV n = cast(NumV)v;
@@ -202,8 +196,7 @@ Value interp(ExprC c, Env e) {
     }
   } else if (cast (LamC) c) {
     LamC l = (cast (LamC) c);
-    ClosV cloV = new ClosV(l.params, l.bod, e);
-    return (cast (Value) cloV);
+    return new ClosV(l.params, l.bod, e);
   } else if (cast(BinopC) c){
       BinopC binop = cast(BinopC) c;
       Value left = interp(binop.left, e);
