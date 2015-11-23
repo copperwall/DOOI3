@@ -223,12 +223,17 @@ Value interp(ExprC c, Env e)
       Value right = interp(binop.right, e);
       string op = binop.name;
 
-      if (typeid(left) == typeid(NumV) && typeid(right) == typeid(NumV))
+      if ((cast (NumV) left) && (cast (NumV) right)) {
         return evalNumBinop(op, left, right);
+      }
       else if (op == "eq?" && typeid(left) == typeid(BoolV) && typeid(right) == typeid(BoolV))
         return new BoolV(left == right);
       else 
         throw new Error("No such operator");
+   } else if (cast (TrueC) c) {
+      return new BoolV(true);
+   } else if (cast (FalseC) c) {
+      return new BoolV(false);
    }
 
    throw new Error("Unimplemented");
@@ -237,8 +242,8 @@ Value interp(ExprC c, Env e)
 
 Value evalNumBinop(string op, Value left, Value right)
 {
-  int newLeft = (cast(NumC) left).n;
-  int newRight = (cast(NumC) right).n;
+  int newLeft = (cast(NumV) left).n;
+  int newRight = (cast(NumV) right).n;
 
   switch (op)
   {
@@ -257,6 +262,9 @@ Value evalNumBinop(string op, Value left, Value right)
     case "<=":
       return new BoolV(newLeft <= newRight);
 
+    case "eq?":
+      return new BoolV(newLeft == newRight);
+
     default:
       throw new Error("No such arithmetic operator");
   }
@@ -274,7 +282,7 @@ unittest {
       
       writeln("Running first unit test!\n");
       NumC num  = new NumC(5);
-      assert(num.n == 4);
+      assert(num.n == 5);
       
 }
 
@@ -346,34 +354,31 @@ unittest {
 unittest {
   //BINOP TESTS
     BinopC b1 = new BinopC("+", new NumC(1), new NumC(2));
-    assert(interp(b1, []) == new NumV(3));
+    assert(serialize(interp(b1, [])) == "3");
 
     BinopC b2 = new BinopC("-", new NumC(9), new IdC("dorf"));
-    Env env2 = [new Binding("dorf", 6)];
-    assert(interp(b2, env2) == new NumV(3));
+    Env env2 = [new Binding("dorf", new NumV(6))];
+    assert(serialize(interp(b2, env2)) == "3");
 
 
     BinopC b3 = new BinopC("/", new BinopC("*", new NumC(2), new NumC(2)), new NumC(4));
-    assert(interp(b3, []) == new NumV(1));
+    assert(serialize(interp(b3, [])) == "1");
 
 //  //IF TESTS
 
 
 
     IfC if1 = new IfC(new TrueC(), new BinopC("+", new IdC("hey"), new NumC(1)), new FalseC());
-    assert(interp(if1, [new Binding("hey", 5)]) == 6);
+    assert(serialize(interp(if1, [new Binding("hey", new NumV(5))])) == "6");
 
     IfC if2 = new IfC(new FalseC(), new TrueC(), new BinopC("+", new IdC("eh"), new IdC("whaddup")));
-    assert(interp(if2, [new Binding("eh", 5), new Binding("whaddup", 4)]) == 9);
+    assert(serialize(interp(if2, [new Binding("eh", new NumV(5)), new Binding("whaddup", new NumV(4))])) == "9");
 
   //LamC Tests
  }
 
 
 void main() {
-
-  writeln ("TESTING IFC" );
-
    assert(test(new IfC(new TrueC(),
                new NumC(10),
                new NumC(20)),
@@ -388,11 +393,9 @@ void main() {
                   new NumC(12),
                   new NumC(20)),
                "12"));
-
    assert(test(new AppC(new LamC(["a", "b"],
                   new BinopC("+", new IdC("a"), new IdC("b"))),
                   [new NumC(10), new NumC(20)]), "30"));
-
    assert(test(new AppC(
                new AppC(
                   new LamC(["x"],
